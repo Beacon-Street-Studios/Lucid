@@ -159,6 +159,7 @@ function mousePressed() {
     createPart(notes);
     createNoteImgs(notes);
     forcePlay();
+    logNotes();
     return;
   }
 

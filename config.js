@@ -11,12 +11,33 @@ let swellSamples = [
     {file: 'INNOVATION/SWELL/bss_honeywell_swell_innovation_', count:27, tag: 'innovation'},
 ];
 
+let chimeSamples = [
+    {file: 'VISION/CHIME/bss_honeywell_chime_vision_', count:21, tag: 'vision'},
+    {file: 'FUTURE/CHIME/bss_honeywell_chime_future_', count:25, tag: 'future'},
+    {file: 'OPTIMISM/CHIME/bss_honeywell_chime_optimism_', count:23, tag: 'optimism'},
+    {file: 'INNOVATION/CHIME/bss_honeywell_chime_innovation_', count:26, tag: 'innovation'},
+];
+
+let melodySamples = [
+    {file: 'VISION/MELODY/bss_honeywell_melody_vision_', count:7, tag: 'vision'},
+    {file: 'FUTURE/MELODY/bss_honeywell_melody_future_', count:9, tag: 'future'},
+    {file: 'OPTIMISM/MELODY/bss_honeywell_melody_optimism_', count:13, tag: 'optimism'},
+    {file: 'INNOVATION/MELODY/bss_honeywell_melody_innovation_', count:11, tag: 'innovation'},
+];
+
+let percussionSamples = [
+    {file: 'VISION/PERCUSSION/bss_honeywell_percussion_vision_', count:9, tag: 'vision'},
+    {file: 'FUTURE/PERCUSSION/bss_honeywell_percussion_future_', count:14, tag: 'future'},
+    {file: 'OPTIMISM/PERCUSSION/bss_honeywell_percussion_optimism_', count:9, tag: 'optimism'},
+    {file: 'INNOVATION/PERCUSSION/bss_honeywell_percussion_innovation_', count:16, tag: 'innovation'},
+];
+
 // seconds as min/max bounds, min default 0, max default config.duration
 config.voices = [
     {image: 'swell.png', samples: swellSamples, max: 1.5},
-    {image: 'chime.png', file: 'FUTURE/CHIME/bss_honeywell_chime_future_', count:25, min: 1.5, max: 3.0},
-    {image: 'melody.png', file: 'FUTURE/MELODY/bss_honeywell_melody_future_', count:9, min: 3.0},
-    {image: 'percussion.png', file: 'FUTURE/PERCUSSION/bss_honeywell_percussion_future_', count:14}
+    {image: 'chime.png', samples: chimeSamples, min: 1.5, max: 3.0},
+    {image: 'melody.png',  samples: melodySamples, min: 3.0},
+    {image: 'percussion.png',  samples: percussionSamples}
 ];
 
 config.spritedata = {

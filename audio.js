@@ -101,13 +101,14 @@ function randomNote(voiceIndex, filter=[]) {
     let velocity = Math.random() * 0.9 + 0.1;
     
     let noteIndex;
-    if (voiceIndex == 0) {
-        let notes = filteredNotes(voiceIndex, filter);
-        index = Math.floor(Math.random() * notes.length);
-        noteIndex = notes[index];
-    } else {
-        noteIndex = Math.floor(Math.random() * noteRanges[voiceIndex].length);
-    }
+    let notes = filteredNotes(voiceIndex, filter);
+    let index = Math.floor(Math.random() * notes.length);
+    let noteValue = notes[index];
+    noteIndex = noteRanges[voiceIndex].indexOf(noteValue);
+    // noteIndex = notes[index];
+    
+    // noteIndex = Math.floor(Math.random() * noteRanges[voiceIndex].length);
+        
     let note = new NoteValue(time, velocity, voiceIndex, noteIndex);
     return note;
 }
@@ -132,6 +133,11 @@ function randomTimeinMeasures() {
     let time = measures + ":" + quarters + ":" + sixteenths;
 
     return {time, inSixteenths}
+}
+
+function logNotes() {
+    let urls = noteImgs.map(noteImg => noteRanges[noteImg.noteValue.voiceIndex][noteImg.noteValue.noteIndex]).map( note => sampleUrls[Tone.Frequency(note, "midi").toNote()] )
+    console.log(urls);
 }
 
 class NoteValue {
