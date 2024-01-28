@@ -29,18 +29,22 @@ let nextPlaybackRate = config.defaultPlaybackRate;
 
 config.voices.forEach( (voice, index) => {
     midiStart = midiNumber;
-    if (voice.count != undefined) {
+    if (voice.samples == undefined) {
         for (var i = 1; i <= voice.count; i++) {
-            let key = Tone.Frequency(midiNumber, "midi").toNote()
+            let key = Tone.Frequency(midiNumber, "midi").toNote();
             sampleUrls[key] = `${voice.file}${i}.wav`;
             midiNumber++; 
         }
     } else {
-        for (var i = 0; i < voice.samples.length; i++) {
-            let key = Tone.Frequency(midiNumber, "midi").toNote()
-            sampleUrls[key] = voice.samples[i].file;
-            noteTags[midiNumber] = voice.samples[i].tag.split(',');
-            midiNumber++; 
+        for (var j = 0; j < voice.samples.length; j++) {
+            let sample = voice.samples[j];
+
+            for (var i = 1; i <= sample.count; i++) {
+                let key = Tone.Frequency(midiNumber, "midi").toNote();
+                sampleUrls[key] = `${sample.file}${i}.wav`;
+                noteTags[midiNumber] = sample.tag.split(',');
+                midiNumber++; 
+            }
         }
     }
 

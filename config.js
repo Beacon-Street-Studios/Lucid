@@ -4,26 +4,19 @@ var config = {}
 config.duration = 4.0;
 config.defaultPlaybackRate = 2.0;
 
-let toasterSamples = [
-    {file: 'bss_eggo_dingthing_toaster_1.wav', tag: 'vision,future'},
-    {file: 'bss_eggo_dingthing_toaster_2.wav', tag: 'vision,future'},
-    {file: 'bss_eggo_dingthing_toaster_3.wav', tag: 'vision,future'},
-    {file: 'bss_eggo_dingthing_toaster_4.wav', tag: 'vision,future'},
-    {file: 'bss_eggo_dingthing_toaster_5.wav', tag: 'innovation'},
-    {file: 'bss_eggo_dingthing_toaster_6.wav', tag: 'innovation'},
-    {file: 'bss_eggo_dingthing_toaster_7.wav', tag: 'optimism'},
-    {file: 'bss_eggo_dingthing_toaster_8.wav', tag: 'optimism'},
-    {file: 'bss_eggo_dingthing_toaster_9.wav', tag: 'innovation'},
-    {file: 'bss_eggo_dingthing_toaster_10.wav', tag: 'optimism'},
-    {file: 'bss_eggo_dingthing_toaster_11.wav', tag: 'optimism'},
+let swellSamples = [
+    {file: 'VISION/SWELL/bss_honeywell_swell_vision_', count:21, tag: 'innovation'},
+    {file: 'FUTURE/SWELL/bss_honeywell_swell_future_', count:24, tag: 'future'},
+    {file: 'OPTIMISM/SWELL/bss_honeywell_swell_optimism_', count:23, tag: 'innovation'},
+    {file: 'INNOVATION/SWELL/bss_honeywell_swell_innovation_', count:27, tag: 'innovation'},
 ];
 
 // seconds as min/max bounds, min default 0, max default config.duration
 config.voices = [
-    {image: 'swell.png', samples: toasterSamples, max: 1.5},
-    {image: 'chime.png', file: 'bss_eggo_dingthing_ding_', count:17, min: 1.5, max: 3.0},  
-    {image: 'melody.png', file: 'bss_eggo_dingthing_waffle_', count:6, min: 3.0}, 
-    {image: 'percussion.png', file: 'bss_eggo_dingthing_leggo_', count:11}
+    {image: 'swell.png', samples: swellSamples, max: 1.5},
+    {image: 'chime.png', file: 'FUTURE/CHIME/bss_honeywell_chime_future_', count:25, min: 1.5, max: 3.0},
+    {image: 'melody.png', file: 'FUTURE/MELODY/bss_honeywell_melody_future_', count:9, min: 3.0},
+    {image: 'percussion.png', file: 'FUTURE/PERCUSSION/bss_honeywell_percussion_future_', count:14}
 ];
 
 config.spritedata = {
