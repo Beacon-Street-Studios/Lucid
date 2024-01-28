@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="ext/tingle.min.css">
+    <script src="config.js"></script>
+    <script src="https://unpkg.com/tone"></script>
+    <script src="audio.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>
+    <script src="ext/tingle.min.js"></script>
+    <script src="main.js"></script>
+    <script src="https://unpkg.com/p5.tween/dist/p5.tween.min.js"></script>
+  </head>
+  <body>
+    <main>
+    </main>
+    <div class="modal-content">
+      <div id="copy">COPY THIS LINK TO SHARE YOUR CREATION</div>
+      <div id="link"></div>
+      <button class="btn" onclick="copyContent()">COPY</button>
+    </div>
+  <script>
+var modalTinyNoFooter = new tingle.modal({
+  cssClass: ['class1', 'class2']
+});
+const copyContent = async () => {
+  let link = document.getElementById('link').innerText;
+  try {
+    await navigator.clipboard.writeText(link);
+  } catch (err) {
+    console.error('Failed to copy: ', err);
+  }
+}
+  </script>
+  </body>
+</html>
