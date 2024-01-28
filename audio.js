@@ -114,8 +114,12 @@ function randomNote(voiceIndex, filter=[]) {
 
 function filteredNotes(voiceIndex, filter) {
     let possibleNotes = noteRanges[voiceIndex];
-    let returnFilter = possibleNotes.filter( note => noteTags[note].some(tag => filter.includes(tag)));
-    return returnFilter;
+    if (filter.length == 0) {
+        return possibleNotes;
+    } else {
+        let returnFilter = possibleNotes.filter( note => noteTags[note].some(tag => filter.includes(tag)));
+        return returnFilter;
+    }
 }
 
 function randomTimeinMeasures() {
