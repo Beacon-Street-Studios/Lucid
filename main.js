@@ -25,8 +25,6 @@ function preload() {
     backgroundImg = loadImage('img/' + config.backgroundImage)
   }
 
-  sideImg = loadImage('img/side_graphic.png');
-  
   imgRefs = config.voices.map( (voice) => { return loadImage('img/' + voice.image) } );
 
   prevImg = loadImage('img/previous_sound.png');
@@ -53,7 +51,7 @@ function preload() {
 function setup() {
     createCanvas(1920, 1080);
     
-    menuWidth = 400;
+    menuWidth = 417;
     sequenceWidth = 1920 - menuWidth - 16;
 
     sequenceHeight = 869 - 229 - 16;
@@ -115,8 +113,6 @@ function createNoteImgs(notes) {
 
 function draw() {
   background(backgroundImg ?? config.backgroundColor ?? 'gray');
-
-  image(sideImg, 0, 0);
 
   let menuColor = color('#FFFFFF');
   menuColor.setAlpha(76);
@@ -507,11 +503,12 @@ class HScrollbar {
     fill(f);
     let dW = this.pos - this.x;
     rect(this.x, this.y - this.height/2, dW, this.height, this.radius / 2);
-    f.setAlpha(127);
-    fill(f);
+
+    let b = color('black');
+    b.setAlpha(76);
+    fill(b);
     rect(this.pos, this.y - this.height/2, this.width - dW, this.height, this.radius / 2);
 
-    f.setAlpha(255);
     fill(f);
     circle(this.pos, this.y, this.radius * 2);
   }
