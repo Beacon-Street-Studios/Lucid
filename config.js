@@ -5,9 +5,9 @@ config.duration = 4.0;
 config.defaultPlaybackRate = 2.0;
 
 let swellSamples = [
-    {file: 'VISION/SWELL/bss_honeywell_swell_vision_', count:21, tag: 'innovation'},
+    {file: 'VISION/SWELL/bss_honeywell_swell_vision_', count:21, tag: 'vision'},
     {file: 'FUTURE/SWELL/bss_honeywell_swell_future_', count:24, tag: 'future'},
-    {file: 'OPTIMISM/SWELL/bss_honeywell_swell_optimism_', count:23, tag: 'innovation'},
+    {file: 'OPTIMISM/SWELL/bss_honeywell_swell_optimism_', count:23, tag: 'optimism'},
     {file: 'INNOVATION/SWELL/bss_honeywell_swell_innovation_', count:27, tag: 'innovation'},
 ];
 
