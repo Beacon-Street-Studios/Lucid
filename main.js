@@ -16,16 +16,16 @@ let tapNote;
 let activeFilter;
 let filterButtons;
 
-let spritesheet;
-let animation = [];
-let objects = [];
+let spritesheetRefs = [];
+let sprites = [];
 
 function preload() {
   if (typeof config.backgroundImage !== "undefined") { 
     backgroundImg = loadImage('img/' + config.backgroundImage)
   }
 
-  imgRefs = config.voices.map( (voice) => { return loadImage('img/' + voice.image) } );
+  // imgRefs = config.voices.map( (voice) => { return loadImage('img/' + voice.image) } );
+  spritesheetRefs = config.voices.map( (voice) => { return loadImage('img/' + voice.sprite.spritesheet) } );
 
   prevImg = loadImage('img/previous_sound.png');
   nextImg = loadImage('img/next_sound.png');
@@ -45,7 +45,6 @@ function preload() {
   slowerImg = loadImage('img/slower.png');
 
   indicatorImg = loadImage('img/play_bar_indicator.png');
-  spritesheet = loadImage('img/' + config.spritedata.spritesheet);
 }
 
 function setup() {
@@ -70,14 +69,7 @@ function setup() {
       notes = randomNotes();
     }
 
-    let frames = config.spritedata.frames;
-    for (let i = 0; i < frames.length; i++) {
-      let pos = frames[i].position;
-      let img = spritesheet.get(pos.x, pos.y, pos.w, pos.h);
-      animation.push(img);
-    }
-  
-    objects[0] = new Sprite(animation, 1);
+    sprites = config.voices.map( voice => voice.sprite ).map( (sprite, index) => loadSprite(sprite.frames, spritesheetRefs[index]) );
 
     createNoteImgs(notes);
     createPart(notes);
@@ -98,14 +90,25 @@ function setup() {
     helpButton = new Button(helpImg, 1831, 992);
 }
 
+function loadSprite(frames, spritesheet) {
+  let animation = [];
+  for (let i = 0; i < frames.length; i++) {
+    let pos = frames[i].position;
+    let img = spritesheet.get(pos.x, pos.y, pos.w, pos.h);
+    animation.push(img);
+  }
+
+  return new Sprite(animation, 1);
+}
+
 function createNoteImgs(notes) {
   noteImgs = []
   notes.forEach(function (note) {
     let left = sequenceWidth * note.time / config.duration + menuWidth + 8;
     let top = (1 - note.velocity) * sequenceHeight + 8;
-    let img = imgRefs[note.voiceIndex];
-    let sprite = note.voiceIndex == 0 ? objects[0] : undefined;
-    let newNote = new Note(img,left,top,note, sprite);
+    // let img = imgRefs[note.voiceIndex];
+    let sprite = sprites[note.voiceIndex];
+    let newNote = new Note(undefined,left,top,note, sprite);
     note.noteImg = newNote;
     noteImgs.push(newNote)
   });

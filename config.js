@@ -32,18 +32,33 @@ let percussionSamples = [
     {file: 'INNOVATION/PERCUSSION/bss_honeywell_percussion_innovation_', count:16, tag: 'innovation'},
 ];
 
-// seconds as min/max bounds, min default 0, max default config.duration
-config.voices = [
-    {image: 'swell.png', samples: swellSamples, max: 1.5},
-    {image: 'chime.png', samples: chimeSamples, min: 1.5, max: 3.0},
-    {image: 'melody.png',  samples: melodySamples, min: 3.0},
-    {image: 'percussion.png',  samples: percussionSamples}
-];
-
-config.spritedata = {
+let swellSprite = {
     spritesheet: 'test_spritesheet_200x200_128frames.png',
     frames: [...Array(128).keys()].map(i => { return {position: {x:0, y: i*200, w: 200, h: 200}} }),
 }
+
+let chimeSprite = {
+    spritesheet: 'test_spritesheet_200x200_128frames.png',
+    frames: [...Array(128).keys()].map(i => { return {position: {x:0, y: i*200, w: 200, h: 200}} }),
+}
+
+let melodySprite = {
+    spritesheet: 'test_spritesheet_200x200_128frames.png',
+    frames: [...Array(128).keys()].map(i => { return {position: {x:0, y: i*200, w: 200, h: 200}} }),
+}
+
+let percussionSprite = {
+    spritesheet: 'test_spritesheet_200x200_128frames.png',
+    frames: [...Array(128).keys()].map(i => { return {position: {x:0, y: i*200, w: 200, h: 200}} }),
+}
+
+// seconds as min/max bounds, min default 0, max default config.duration
+config.voices = [
+    {sprite: swellSprite, samples: swellSamples, max: 1.5},
+    {sprite: chimeSprite, samples: chimeSamples, min: 1.5, max: 3.0},
+    {sprite: melodySprite,  samples: melodySamples, min: 3.0},
+    {sprite: percussionSprite,  samples: percussionSamples}
+];
 
 config.voiceCount = config.voices.length;
 
