@@ -33,23 +33,23 @@ let percussionSamples = [
 ];
 
 let swellSprite = {
-    spritesheet: 'test_spritesheet_200x200_128frames.png',
-    frames: [...Array(128).keys()].map(i => { return {position: {x:0, y: i*200, w: 200, h: 200}} }),
+    spritesheet: 'swell_spritesheet_300x300.png',
+    frames: [...Array(120).keys()].map(i => { return {position: {x:0, y: i*300, w: 300, h: 300}} }),
 }
 
 let chimeSprite = {
-    spritesheet: 'test_spritesheet_200x200_128frames.png',
-    frames: [...Array(128).keys()].map(i => { return {position: {x:0, y: i*200, w: 200, h: 200}} }),
+    spritesheet: 'chime_spritesheet_300x300.png',
+    frames: [...Array(120).keys()].map(i => { return {position: {x:0, y: i*300, w: 300, h: 300}} }),
 }
 
 let melodySprite = {
-    spritesheet: 'test_spritesheet_200x200_128frames.png',
-    frames: [...Array(128).keys()].map(i => { return {position: {x:0, y: i*200, w: 200, h: 200}} }),
+    spritesheet: 'melody_spritesheet_300x300.png',
+    frames: [...Array(120).keys()].map(i => { return {position: {x:0, y: i*300, w: 300, h: 300}} }),
 }
 
 let percussionSprite = {
-    spritesheet: 'test_spritesheet_200x200_128frames.png',
-    frames: [...Array(128).keys()].map(i => { return {position: {x:0, y: i*200, w: 200, h: 200}} }),
+    spritesheet: 'percussion_spritesheet_300x300.png',
+    frames: [...Array(120).keys()].map(i => { return {position: {x:0, y: i*300, w: 300, h: 300}} }),
 }
 
 // seconds as min/max bounds, min default 0, max default config.duration
