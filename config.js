@@ -55,8 +55,8 @@ let percussionSprite = {
 // seconds as min/max bounds, min default 0, max default config.duration
 config.voices = [
     {sprite: swellSprite, samples: swellSamples, max: 1.5},
-    {sprite: chimeSprite, samples: chimeSamples, min: 1.5, max: 3.0},
-    {sprite: melodySprite,  samples: melodySamples, min: 3.0},
+    {sprite: chimeSprite, samples: chimeSamples, min: 1.5, max: 2.7},
+    {sprite: melodySprite,  samples: melodySamples, min: 2.7},
     {sprite: percussionSprite,  samples: percussionSamples}
 ];
 
