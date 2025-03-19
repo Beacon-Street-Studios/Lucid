@@ -27,68 +27,82 @@ let part;
 let playbackRate = config.defaultPlaybackRate;
 let nextPlaybackRate = config.defaultPlaybackRate;
 
+// Helper function to add delay between fetch requests
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Function to check if a file exists with throttling to avoid rate limits
+async function checkFileExists(url, maxRetries = 3, initialDelay = 200) {
+    let retries = 0;
+    let currentDelay = initialDelay;
+    
+    while (retries < maxRetries) {
+        try {
+            const response = await fetch(url, { method: 'HEAD' });
+            return response.ok;
+        } catch (error) {
+            retries++;
+            if (retries >= maxRetries) {
+                console.warn(`Failed to check ${url} after ${maxRetries} attempts`);
+                return false;
+            }
+            // Exponential backoff
+            await delay(currentDelay);
+            currentDelay *= 2; // Double the delay for next retry
+        }
+    }
+    return false;
+}
+
 // Function to dynamically find available audio files
 async function discoverAudioFiles() {
-    // Create an array to collect all promises
-    let fileCheckPromises = [];
-    
     // Track the highest file number found for each sample pattern
     let maxFileNumbers = {};
     
-    // Iterate through all voice types and their samples
-    config.voices.forEach((voice, index) => {
-        if (voice.samples) {
-            voice.samples.forEach(sample => {
-                if (!sample.pattern) return;
-                
-                maxFileNumbers[sample.pattern] = 0;
-                
-                // Try to find the maximum file number by checking file existence
-                // We'll start checking from 1 and increase until we don't find a file
-                // Track which format each file is using
-                if (!sample.fileFormats) sample.fileFormats = {};
-                
-                for (let i = 1; i <= 100; i++) { // Set a reasonable upper limit
-                    // Check for WAV files
-                    let wavUrl = `./audio/${sample.file}${i}.wav`;
-                    let wavPromise = fetch(wavUrl, { method: 'HEAD' })
-                        .then(response => {
-                            if (response.ok) {
-                                // Update max file number if this file exists
-                                maxFileNumbers[sample.pattern] = Math.max(maxFileNumbers[sample.pattern], i);
-                                // Record that this file number exists as WAV
-                                sample.fileFormats[i] = '.wav';
-                                return true;
-                            }
-                            return false;
-                        })
-                        .catch(() => false);
-                    
-                    fileCheckPromises.push(wavPromise);
-                    
-                    // Also check for MP3 files
-                    let mp3Url = `./audio/${sample.file}${i}.mp3`;
-                    let mp3Promise = fetch(mp3Url, { method: 'HEAD' })
-                        .then(response => {
-                            if (response.ok) {
-                                // Update max file number if this file exists
-                                maxFileNumbers[sample.pattern] = Math.max(maxFileNumbers[sample.pattern], i);
-                                // Record that this file number exists as MP3
-                                sample.fileFormats[i] = '.mp3';
-                                return true;
-                            }
-                            return false;
-                        })
-                        .catch(() => false);
-                    
-                    fileCheckPromises.push(mp3Promise);
-                }
-            });
-        }
-    });
+    // Limit the maximum number of files to check to reduce server load
+    const MAX_FILES_TO_CHECK = 30; // Reduced from 100
     
-    // Wait for all file checks to complete
-    await Promise.all(fileCheckPromises);
+    // Iterate through all voice types and their samples
+    for (const voice of config.voices) {
+        if (!voice.samples) continue;
+        
+        for (const sample of voice.samples) {
+            if (!sample.pattern) continue;
+            
+            maxFileNumbers[sample.pattern] = 0;
+            if (!sample.fileFormats) sample.fileFormats = {};
+            
+            // Check files sequentially instead of all at once
+            for (let i = 1; i <= MAX_FILES_TO_CHECK; i++) {
+                // First check if WAV exists
+                const wavUrl = `./audio/${sample.file}${i}.wav`;
+                const wavExists = await checkFileExists(wavUrl);
+                
+                if (wavExists) {
+                    maxFileNumbers[sample.pattern] = Math.max(maxFileNumbers[sample.pattern], i);
+                    sample.fileFormats[i] = '.wav';
+                    continue; // If WAV exists, don't bother checking MP3
+                }
+                
+                // Only check for MP3 if WAV doesn't exist
+                const mp3Url = `./audio/${sample.file}${i}.mp3`;
+                const mp3Exists = await checkFileExists(mp3Url);
+                
+                if (mp3Exists) {
+                    maxFileNumbers[sample.pattern] = Math.max(maxFileNumbers[sample.pattern], i);
+                    sample.fileFormats[i] = '.mp3';
+                } else if (i > 1 && !wavExists && !mp3Exists) {
+                    // If we don't find either format and we're past the first file,
+                    // assume we've reached the end of files for this pattern
+                    break;
+                }
+                
+                // Add a small delay between checks to be gentle on the server
+                await delay(50);
+            }
+        }
+    }
     
     // Now we need to update sample counts based on what we found
     config.voices.forEach(voice => {
