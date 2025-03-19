@@ -4,34 +4,32 @@ var config = {}
 config.duration = 4.0;
 config.defaultPlaybackRate = 2.0;
 
-// Dynamic sample loading configuration
-// Each object defines the pattern and tag, with count to be determined at runtime
 let swellSamples = [
-    {file: 'HUMANITY/SWELL/bss_lucid_swell_humanity_', tag: 'humanity', pattern: 'bss_lucid_swell_humanity_'},
-    {file: 'DEFIANCE/SWELL/bss_lucid_swell_defiance_', tag: 'defiance', pattern: 'bss_lucid_swell_defiance_'},
-    {file: 'SOPHISTICATION/SWELL/bss_lucid_swell_sophistication_', tag: 'sophistication', pattern: 'bss_lucid_swell_sophistication_'},
-    {file: 'INNOVATION/SWELL/bss_lucid_swell_innovation_', tag: 'innovation', pattern: 'bss_lucid_swell_innovation_'},
+    {file: 'HUMANITY/SWELL/bss_lucid_swell_humanity_', count:21, tag: 'humanity'},
+    {file: 'DEFIANCE/SWELL/bss_lucid_swell_defiance_', count:24, tag: 'defiance'},
+    {file: 'SOPHISTICATION/SWELL/bss_lucid_swell_sophistication_', count:23, tag: 'sophistication'},
+    {file: 'INNOVATION/SWELL/bss_lucid_swell_innovation_', count:27, tag: 'innovation'},
 ];
 
 let chimeSamples = [
-    {file: 'HUMANITY/CHIME/bss_lucid_chime_humanity_', tag: 'humanity', pattern: 'bss_lucid_chime_humanity_'},
-    {file: 'DEFIANCE/CHIME/bss_lucid_chime_defiance_', tag: 'defiance', pattern: 'bss_lucid_chime_defiance_'},
-    {file: 'SOPHISTICATION/CHIME/bss_lucid_chime_sophistication_', tag: 'sophistication', pattern: 'bss_lucid_chime_sophistication_'},
-    {file: 'INNOVATION/CHIME/bss_lucid_chime_innovation_', tag: 'innovation', pattern: 'bss_lucid_chime_innovation_'},
+    {file: 'HUMANITY/CHIME/bss_lucid_chime_humanity_', count:21, tag: 'humanity'},
+    {file: 'DEFIANCE/CHIME/bss_lucid_chime_defiance_', count:25, tag: 'defiance'},
+    {file: 'SOPHISTICATION/CHIME/bss_lucid_chime_sophistication_', count:23, tag: 'sophistication'},
+    {file: 'INNOVATION/CHIME/bss_lucid_chime_innovation_', count:26, tag: 'innovation'},
 ];
 
 let melodySamples = [
-    {file: 'HUMANITY/MELODY/bss_lucid_melody_humanity_', tag: 'humanity', pattern: 'bss_lucid_melody_humanity_'},
-    {file: 'DEFIANCE/MELODY/bss_lucid_melody_defiance_', tag: 'defiance', pattern: 'bss_lucid_melody_defiance_'},
-    {file: 'SOPHISTICATION/MELODY/bss_lucid_melody_sophistication_', tag: 'sophistication', pattern: 'bss_lucid_melody_sophistication_'},
-    {file: 'INNOVATION/MELODY/bss_lucid_melody_innovation_', tag: 'innovation', pattern: 'bss_lucid_melody_innovation_'},
+    {file: 'HUMANITY/MELODY/bss_lucid_melody_humanity_', count:7, tag: 'humanity'},
+    {file: 'DEFIANCE/MELODY/bss_lucid_melody_defiance_', count:9, tag: 'defiance'},
+    {file: 'SOPHISTICATION/MELODY/bss_lucid_melody_sophistication_', count:13, tag: 'sophistication'},
+    {file: 'INNOVATION/MELODY/bss_lucid_melody_innovation_', count:11, tag: 'innovation'},
 ];
 
 let percussionSamples = [
-    {file: 'HUMANITY/PERCUSSION/bss_lucid_percussion_humanity_', tag: 'humanity', pattern: 'bss_lucid_percussion_humanity_'},
-    {file: 'DEFIANCE/PERCUSSION/bss_lucid_percussion_defiance_', tag: 'defiance', pattern: 'bss_lucid_percussion_defiance_'},
-    {file: 'SOPHISTICATION/PERCUSSION/bss_lucid_percussion_sophistication_', tag: 'sophistication', pattern: 'bss_lucid_percussion_sophistication_'},
-    {file: 'INNOVATION/PERCUSSION/bss_lucid_percussion_innovation_', tag: 'innovation', pattern: 'bss_lucid_percussion_innovation_'},
+    {file: 'HUMANITY/PERCUSSION/bss_lucid_percussion_humanity_', count:9, tag: 'humanity'},
+    {file: 'DEFIANCE/PERCUSSION/bss_lucid_percussion_defiance_', count:14, tag: 'defiance'},
+    {file: 'SOPHISTICATION/PERCUSSION/bss_lucid_percussion_sophistication_', count:9, tag: 'sophistication'},
+    {file: 'INNOVATION/PERCUSSION/bss_lucid_percussion_innovation_', count:16, tag: 'innovation'},
 ];
 
 let swellSprite = {
@@ -54,32 +52,12 @@ let percussionSprite = {
     frames: [...Array(120).keys()].map(i => { return {position: {x:0, y: i*300, w: 300, h: 300}} }),
 }
 
-// Voice configuration for audio engine
-// This structure allows for dynamic discovery of available audio files
+// seconds as min/max bounds, min default 0, max default config.duration
 config.voices = [
-    {
-        name: 'swell',
-        sprite: swellSprite,
-        samples: swellSamples,
-        max: 1.5
-    },
-    {
-        name: 'chime',
-        sprite: chimeSprite,
-        samples: chimeSamples,
-        min: 1.5, max: 2.7
-    },
-    {
-        name: 'melody',
-        sprite: melodySprite,
-        samples: melodySamples,
-        min: 2.7
-    },
-    {
-        name: 'percussion',
-        sprite: percussionSprite,
-        samples: percussionSamples
-    }
+    {sprite: swellSprite, samples: swellSamples, max: 1.5},
+    {sprite: chimeSprite, samples: chimeSamples, min: 1.5, max: 2.7},
+    {sprite: melodySprite,  samples: melodySamples, min: 2.7},
+    {sprite: percussionSprite,  samples: percussionSamples}
 ];
 
 config.voiceCount = config.voices.length;
