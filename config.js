@@ -5,30 +5,30 @@ config.duration = 4.0;
 config.defaultPlaybackRate = 2.0;
 
 let swellSamples = [
-    {file: 'VISION/SWELL/bss_lucid_swell_vision_', count:21, tag: 'vision'},
-    {file: 'FUTURE/SWELL/bss_lucid_swell_future_', count:24, tag: 'future'},
-    {file: 'OPTIMISM/SWELL/bss_lucid_swell_optimism_', count:23, tag: 'optimism'},
+    {file: 'HUMANITY/SWELL/bss_lucid_swell_humanity_', count:21, tag: 'humanity'},
+    {file: 'DEFIANCE/SWELL/bss_lucid_swell_defiance_', count:24, tag: 'defiance'},
+    {file: 'SOPHISTICATION/SWELL/bss_lucid_swell_sophistication_', count:23, tag: 'sophistication'},
     {file: 'INNOVATION/SWELL/bss_lucid_swell_innovation_', count:27, tag: 'innovation'},
 ];
 
 let chimeSamples = [
-    {file: 'VISION/CHIME/bss_lucid_chime_vision_', count:21, tag: 'vision'},
-    {file: 'FUTURE/CHIME/bss_lucid_chime_future_', count:25, tag: 'future'},
-    {file: 'OPTIMISM/CHIME/bss_lucid_chime_optimism_', count:23, tag: 'optimism'},
+    {file: 'HUMANITY/CHIME/bss_lucid_chime_humanity_', count:21, tag: 'humanity'},
+    {file: 'DEFIANCE/CHIME/bss_lucid_chime_defiance_', count:25, tag: 'defiance'},
+    {file: 'SOPHISTICATION/CHIME/bss_lucid_chime_sophistication_', count:23, tag: 'sophistication'},
     {file: 'INNOVATION/CHIME/bss_lucid_chime_innovation_', count:26, tag: 'innovation'},
 ];
 
 let melodySamples = [
-    {file: 'VISION/MELODY/bss_lucid_melody_vision_', count:7, tag: 'vision'},
-    {file: 'FUTURE/MELODY/bss_lucid_melody_future_', count:9, tag: 'future'},
-    {file: 'OPTIMISM/MELODY/bss_lucid_melody_optimism_', count:13, tag: 'optimism'},
+    {file: 'HUMANITY/MELODY/bss_lucid_melody_humanity_', count:7, tag: 'humanity'},
+    {file: 'DEFIANCE/MELODY/bss_lucid_melody_defiance_', count:9, tag: 'defiance'},
+    {file: 'SOPHISTICATION/MELODY/bss_lucid_melody_sophistication_', count:13, tag: 'sophistication'},
     {file: 'INNOVATION/MELODY/bss_lucid_melody_innovation_', count:11, tag: 'innovation'},
 ];
 
 let percussionSamples = [
-    {file: 'VISION/PERCUSSION/bss_lucid_percussion_vision_', count:9, tag: 'vision'},
-    {file: 'FUTURE/PERCUSSION/bss_lucid_percussion_future_', count:14, tag: 'future'},
-    {file: 'OPTIMISM/PERCUSSION/bss_lucid_percussion_optimism_', count:9, tag: 'optimism'},
+    {file: 'HUMANITY/PERCUSSION/bss_lucid_percussion_humanity_', count:9, tag: 'humanity'},
+    {file: 'DEFIANCE/PERCUSSION/bss_lucid_percussion_defiance_', count:14, tag: 'defiance'},
+    {file: 'SOPHISTICATION/PERCUSSION/bss_lucid_percussion_sophistication_', count:9, tag: 'sophistication'},
     {file: 'INNOVATION/PERCUSSION/bss_lucid_percussion_innovation_', count:16, tag: 'innovation'},
 ];
 
@@ -63,7 +63,7 @@ config.voices = [
 config.voiceCount = config.voices.length;
 
 // Order of precedence: image, color, default gray (if undefined)
-config.backgroundColor = 'white';
+config.backgroundColor = '#222222';
 config.backgroundImage = 'background.png';
-config.sliderColor = '#D93F27';
+config.sliderColor = '#222222';
 config.tapDelay = 150;

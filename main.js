@@ -36,9 +36,9 @@ function preload() {
   helpImg = loadImage('img/help.png');
   saveImg = loadImage('img/save.png');
 
-  visionImg = loadImage('img/VISION.png');
-  futureImg = loadImage('img/FUTURE.png');
-  optimismImg = loadImage('img/OPTIMISM.png');
+  humanityImg = loadImage('img/HUMANITY.png');
+  defianceImg = loadImage('img/DEFIANCE.png');
+  sophisticationImg = loadImage('img/SOPHISTICATION.png');
   innovationImg = loadImage('img/INNOVATION.png');
 
   fasterImg = loadImage('img/faster.png');
@@ -78,11 +78,17 @@ function setup() {
     playButton = new Button(playImg, 984, 816, stopImg);
     saveButton = new Button(saveImg, 1156, 831);
 
-    visionButton = new Button(visionImg, 266, 772, undefined, 'vision');
-    futureButton = new Button(futureImg, 252, 839, undefined, 'future');
-    optimismButton = new Button(optimismImg, 212, 906, undefined, 'optimism');
-    innovationButton = new Button(innovationImg, 179, 973, undefined, 'innovation');
-    filterButtons = [visionButton, futureButton, optimismButton, innovationButton];
+    // Set a consistent right edge position for all category buttons
+    // Moved a total of 155 pixels to the right (85 + 60 + 10) as requested
+    const rightEdgePosition = 365; // 210 + 85 + 60 + 10
+    
+    // Create buttons with right-alignment enabled
+    // Y positions moved down by 3 pixels
+    humanityButton = new Button(humanityImg, rightEdgePosition, 775, undefined, 'humanity', true);
+    defianceButton = new Button(defianceImg, rightEdgePosition, 842, undefined, 'defiance', true);
+    sophisticationButton = new Button(sophisticationImg, rightEdgePosition, 909, undefined, 'sophistication', true);
+    innovationButton = new Button(innovationImg, rightEdgePosition, 976, undefined, 'innovation', true);
+    filterButtons = [humanityButton, defianceButton, sophisticationButton, innovationButton];
     updateActiveFilter();
 
     slider = new HScrollbar(910, 1030-8, 294, 16, 16, 0.1, 4.0, playbackRate);
@@ -106,16 +112,24 @@ function createNoteImgs(notes) {
   notes.forEach(function (note) {
     let left = sequenceWidth * note.time / config.duration + menuWidth + 8;
     let top = (1 - note.velocity) * sequenceHeight + 8;
-    // let img = imgRefs[note.voiceIndex];
+    
+    // Get sprite for this note
     let sprite = sprites[note.voiceIndex];
-    let newNote = new Note(undefined,left,top,note, sprite);
+    
+    // Create note with initial position
+    let newNote = new Note(undefined, left, top, note, sprite);
+    
     note.noteImg = newNote;
-    noteImgs.push(newNote)
+    noteImgs.push(newNote);
   });
 }
 
 function draw() {
-  background(backgroundImg ?? config.backgroundColor ?? 'gray');
+  // Use dark background color first, then overlay background image if available
+  background('#222222');
+  if (backgroundImg) {
+    image(backgroundImg, 0, 0, width, height);
+  }
 
   let menuColor = color('#FFFFFF');
   menuColor.setAlpha(76);
@@ -123,9 +137,9 @@ function draw() {
 
   noStroke();
 
-  visionButton.display();
-  futureButton.display();
-  optimismButton.display();
+  humanityButton.display();
+  defianceButton.display();
+  sophisticationButton.display();
   innovationButton.display();
 
   playButton.selected = Tone.Transport.seconds > 0.001;
@@ -374,8 +388,17 @@ class Note {
 }
 
 class Button {
-  constructor(img, x, y, selectedImg, tag) {
-    this.x = x;
+  constructor(img, x, y, selectedImg, tag, rightAligned = false) {
+    this.rightAligned = rightAligned;
+    
+    if (rightAligned) {
+      // For right-aligned buttons, x represents the right edge position
+      this.rightEdge = x;
+      this.x = x - img.width;
+    } else {
+      this.x = x;
+    }
+    
     this.y = y;
     this.img = img;
     this.selectedImg = selectedImg ?? img;
@@ -408,6 +431,12 @@ class Button {
     }
 
     let stateImage = this.selected ? this.selectedImg : this.img;
+    
+    if (this.rightAligned) {
+      // Recalculate x position based on current image width
+      this.x = this.rightEdge - stateImage.width;
+    }
+    
     image(stateImage, this.x, this.y);
   }
 }

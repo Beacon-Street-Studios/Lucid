@@ -94,8 +94,30 @@ function randomNotes(length = config.voiceCount, filter = []) {
   }
   
 function randomNote(voiceIndex, filter=[]) {
+    // Get min/max time bounds from the configuration
     let min = config.voices[voiceIndex].min ?? 0.0;
-    let max = config.voices[voiceIndex].max ?? (config.duration * 0.9);
+    let configMax = config.voices[voiceIndex].max ?? (config.duration * 0.9);
+    
+    // Calculate the right boundary to ensure sprites aren't cut off
+    const canvasWidth = 1920;
+    const menuWidth = 417;
+    const sequenceWidth = canvasWidth - menuWidth - 16; // From main.js
+    
+    // Using a 300px margin as requested
+    const rightMargin = 300;
+    
+    // Calculate what time value would put a sprite at the maximum allowable x position
+    const maxAllowedX = canvasWidth - rightMargin;
+    const maxAllowableTime = ((maxAllowedX - menuWidth - 8) / sequenceWidth) * config.duration;
+    
+    // If the configMax would place a sprite beyond our boundary, use the boundary-based max instead
+    let max = configMax;
+    
+    // Only apply the boundary constraint if it would actually be more restrictive
+    // This ensures we respect both the config limits and the boundary
+    if (maxAllowableTime < configMax) {
+        max = maxAllowableTime;
+    }
 
     let time = min + Math.random() * (max - min);
     let velocity = Math.random() * 0.9 + 0.1;

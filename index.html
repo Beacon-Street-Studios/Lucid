@@ -1,13 +1,29 @@
 <html>
   <head>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1">
     <link rel="stylesheet" href="ext/tingle.min.css">
-    <script src="config.js"></script>
+    <script>
+      // Cache-busting script
+      const cacheBuster = new Date().getTime();
+      const appendParam = (url) => {
+        return url + (url.includes('?') ? '&' : '?') + 'v=' + cacheBuster;
+      };
+      
+      // Override fetch to add cache-busting parameter
+      const originalFetch = window.fetch;
+      window.fetch = function(url, options) {
+        if (typeof url === 'string') {
+          url = appendParam(url);
+        }
+        return originalFetch.call(this, url, options);
+      };
+    </script>
+    <script src="config.js?v=timestamp"></script>
     <script src="https://unpkg.com/tone"></script>
-    <script src="audio.js"></script>
+    <script src="audio.js?v=timestamp"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>
     <script src="ext/tingle.min.js"></script>
-    <script src="main.js"></script>
+    <script src="main.js?v=timestamp"></script>
     <script src="https://unpkg.com/p5.tween/dist/p5.tween.min.js"></script>
   </head>
   <body>
