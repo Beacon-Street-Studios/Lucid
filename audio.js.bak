@@ -1,0 +1,284 @@
+// const player = new Tone.Player("https://tonejs.github.io/audio/berklee/gong_1.mp3").toDestination();
+// Tone.loaded().then(() => {
+// 	player.start();
+// });
+
+//const synth = new Tone.Synth().toDestination();
+
+// let noteRanges = {
+//     0 : ['C1', 'C#1'],
+//     1 : ['C2', 'C#2'],
+//     2 : ['C3', 'C#4'],
+//     3 : ['C4', 'C#4'],
+// }
+
+const range = (start, stop, step=1) =>
+  Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step);
+
+
+let sampleUrls = {};
+let noteRanges = {};
+let noteTags = {};
+
+let midiNumber = 0;
+let midiStart = midiNumber;
+
+let part;
+let playbackRate = config.defaultPlaybackRate;
+let nextPlaybackRate = config.defaultPlaybackRate;
+
+// Function to dynamically find available audio files
+async function discoverAudioFiles() {
+    // Create an array to collect all promises
+    let fileCheckPromises = [];
+    
+    // Track the highest file number found for each sample pattern
+    let maxFileNumbers = {};
+    
+    // Iterate through all voice types and their samples
+    config.voices.forEach((voice, index) => {
+        if (voice.samples) {
+            voice.samples.forEach(sample => {
+                if (!sample.pattern) return;
+                
+                maxFileNumbers[sample.pattern] = 0;
+                
+                // Try to find the maximum file number by checking file existence
+                // We'll start checking from 1 and increase until we don't find a file
+                for (let i = 1; i <= 100; i++) { // Set a reasonable upper limit
+                    let url = `./audio/${sample.file}${i}.wav`;
+                    let promise = fetch(url, { method: 'HEAD' })
+                        .then(response => {
+                            if (response.ok) {
+                                // Update max file number if this file exists
+                                maxFileNumbers[sample.pattern] = Math.max(maxFileNumbers[sample.pattern], i);
+                                return true;
+                            }
+                            return false;
+                        })
+                        .catch(() => false);
+                    
+                    fileCheckPromises.push(promise);
+                }
+            });
+        }
+    });
+    
+    // Wait for all file checks to complete
+    await Promise.all(fileCheckPromises);
+    
+    // Now we need to update sample counts based on what we found
+    config.voices.forEach(voice => {
+        if (voice.samples) {
+            voice.samples.forEach(sample => {
+                if (sample.pattern && maxFileNumbers[sample.pattern] > 0) {
+                    sample.count = maxFileNumbers[sample.pattern];
+                    console.log(`Found ${sample.count} files for pattern: ${sample.pattern}`);
+                }
+            });
+        }
+    });
+    
+    // Now rebuild the audio mappings with the discovered counts
+    initializeAudioMappings();
+}
+
+// Separate function to initialize audio mappings after file discovery
+function initializeAudioMappings() {
+    // Reset values before rebuilding
+    sampleUrls = {};
+    noteRanges = {};
+    noteTags = {};
+    midiNumber = 0;
+    
+    config.voices.forEach((voice, index) => {
+        midiStart = midiNumber;
+        if (voice.samples == undefined) {
+            for (var i = 1; i <= voice.count; i++) {
+                let key = Tone.Frequency(midiNumber, "midi").toNote();
+                sampleUrls[key] = `${voice.file}${i}.wav`;
+                midiNumber++; 
+            }
+        } else {
+            for (var j = 0; j < voice.samples.length; j++) {
+                let sample = voice.samples[j];
+                
+                // Skip if count is 0 (no files found)
+                if (!sample.count || sample.count <= 0) continue;
+
+                for (var i = 1; i <= sample.count; i++) {
+                    let key = Tone.Frequency(midiNumber, "midi").toNote();
+                    sampleUrls[key] = `${sample.file}${i}.wav`;
+                    noteTags[midiNumber] = sample.tag.split(',');
+                    midiNumber++; 
+                }
+            }
+        }
+
+        noteRanges[index] = range(midiStart, midiNumber - 1);
+    });
+    
+    console.log(`Total audio files mapped: ${Object.keys(sampleUrls).length}`);
+}
+
+// Initialize with discovery
+discoverAudioFiles().then(() => {
+    console.log("Audio file discovery complete");
+    // Initialize sampler after discovery is complete
+    sampler = new Tone.Sampler({
+        urls: sampleUrls,
+        release: 1,
+        baseUrl: "./audio/",
+    }).toDestination();
+}).catch(error => {
+    console.error("Error during audio file discovery:", error);
+    // Fallback to traditional initialization if discovery fails
+    initializeAudioMappings();
+    
+    // Create sampler with fallback mappings
+    sampler = new Tone.Sampler({
+        urls: sampleUrls,
+        release: 1,
+        baseUrl: "./audio/",
+    }).toDestination();
+});
+
+// Define sampler variable at the top level so it can be used throughout the code
+let sampler;
+
+function progress() {
+    // return Tone.Transport.seconds / config.duration;
+    return Tone.Transport.seconds / (config.duration / playbackRate) ;
+}
+
+function createPart(values) {
+    if (typeof part !== "undefined") { 
+        part.dispose()
+    }
+    part = new Tone.Part(((time, value) => {
+        sampler.triggerAttackRelease(value.note, 4.0, time, value.velocity)
+        value.noteImg.animate();
+    }), values);
+    
+    part.playbackRate = playbackRate;
+    part.start(0);
+}
+
+function playPart() {
+    Tone.start();
+    Tone.Transport.seconds = 0;
+    Tone.Transport.start();
+    let duration = config.duration / playbackRate;
+    Tone.Transport.stop("+" + duration);
+}
+
+function stop() {
+    Tone.Transport.seconds = 0;
+    Tone.Transport.stop();
+}
+
+function randomNotes(length = config.voiceCount, filter = []) {
+    // return Array.from([0,1,2,3], (i) => randomNote(i));
+    return Array.from({length: length}, (_, i) => randomNote(i, filter));
+  }
+  
+function randomNote(voiceIndex, filter=[]) {
+    // Get min/max time bounds from the configuration
+    let min = config.voices[voiceIndex].min ?? 0.0;
+    let configMax = config.voices[voiceIndex].max ?? (config.duration * 0.9);
+    
+    // Calculate the right boundary to ensure sprites aren't cut off
+    const canvasWidth = 1920;
+    const menuWidth = 417;
+    const sequenceWidth = canvasWidth - menuWidth - 16; // From main.js
+    
+    // Using a 300px margin as requested
+    const rightMargin = 300;
+    
+    // Calculate what time value would put a sprite at the maximum allowable x position
+    const maxAllowedX = canvasWidth - rightMargin;
+    const maxAllowableTime = ((maxAllowedX - menuWidth - 8) / sequenceWidth) * config.duration;
+    
+    // If the configMax would place a sprite beyond our boundary, use the boundary-based max instead
+    let max = configMax;
+    
+    // Only apply the boundary constraint if it would actually be more restrictive
+    // This ensures we respect both the config limits and the boundary
+    if (maxAllowableTime < configMax) {
+        max = maxAllowableTime;
+    }
+
+    let time = min + Math.random() * (max - min);
+    let velocity = Math.random() * 0.9 + 0.1;
+    
+    let noteIndex;
+    let notes = filteredNotes(voiceIndex, filter);
+    let index = Math.floor(Math.random() * notes.length);
+    let noteValue = notes[index];
+    noteIndex = noteRanges[voiceIndex].indexOf(noteValue);
+    // noteIndex = notes[index];
+    
+    // noteIndex = Math.floor(Math.random() * noteRanges[voiceIndex].length);
+        
+    let note = new NoteValue(time, velocity, voiceIndex, noteIndex);
+    return note;
+}
+
+function filteredNotes(voiceIndex, filter) {
+    let possibleNotes = noteRanges[voiceIndex];
+    if (filter.length == 0) {
+        return possibleNotes;
+    } else {
+        let returnFilter = possibleNotes.filter( note => noteTags[note].some(tag => filter.includes(tag)));
+        return returnFilter;
+    }
+}
+
+function randomTimeinMeasures() {
+    let sixteenths = Math.floor(Math.random() * partDuration);
+    let inSixteenths = sixteenths;
+    let measures = Math.floor(sixteenths / 16);
+    sixteenths %= 16;
+    let quarters = Math.floor(sixteenths / 4);
+    sixteenths %= 4;
+    let time = measures + ":" + quarters + ":" + sixteenths;
+
+    return {time, inSixteenths}
+}
+
+function logNotes() {
+    let urls = noteImgs.map(noteImg => noteRanges[noteImg.noteValue.voiceIndex][noteImg.noteValue.noteIndex]).map( note => sampleUrls[Tone.Frequency(note, "midi").toNote()] )
+    console.log(urls);
+}
+
+class NoteValue {
+    constructor(time, velocity, voiceIndex, noteIndex) {
+        this.time = time;
+        this.velocity = velocity;
+        this.voiceIndex = voiceIndex;
+        this.noteIndex = noteIndex;
+        this.noteImg = undefined;
+    }
+
+    get note() {
+        let midiNumber = parseInt(noteRanges[this.voiceIndex][this.noteIndex]);
+        return Tone.Frequency(midiNumber, "midi").toNote()
+    }
+
+    nextNoteIndex() {
+        this.noteIndex += 1;
+        this.noteIndex %= noteRanges[this.voiceIndex].length;
+        this.previewSound();
+    }
+
+    previousNoteIndex() {
+        this.noteIndex += noteRanges[this.voiceIndex].length - 1;
+        this.noteIndex %= noteRanges[this.voiceIndex].length;
+        this.previewSound();
+    }
+
+    previewSound() {
+        sampler.triggerAttackRelease(this.note, 4.0, undefined, this.velocity);
+    }
+
+}

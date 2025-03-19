@@ -27,35 +27,150 @@ let part;
 let playbackRate = config.defaultPlaybackRate;
 let nextPlaybackRate = config.defaultPlaybackRate;
 
-config.voices.forEach( (voice, index) => {
-    midiStart = midiNumber;
-    if (voice.samples == undefined) {
-        for (var i = 1; i <= voice.count; i++) {
-            let key = Tone.Frequency(midiNumber, "midi").toNote();
-            sampleUrls[key] = `${voice.file}${i}.wav`;
-            midiNumber++; 
+// Function to dynamically find available audio files
+async function discoverAudioFiles() {
+    // Create an array to collect all promises
+    let fileCheckPromises = [];
+    
+    // Track the highest file number found for each sample pattern
+    let maxFileNumbers = {};
+    
+    // Iterate through all voice types and their samples
+    config.voices.forEach((voice, index) => {
+        if (voice.samples) {
+            voice.samples.forEach(sample => {
+                if (!sample.pattern) return;
+                
+                maxFileNumbers[sample.pattern] = 0;
+                
+                // Try to find the maximum file number by checking file existence
+                // We'll start checking from 1 and increase until we don't find a file
+                // Track which format each file is using
+                if (!sample.fileFormats) sample.fileFormats = {};
+                
+                for (let i = 1; i <= 100; i++) { // Set a reasonable upper limit
+                    // Check for WAV files
+                    let wavUrl = `./audio/${sample.file}${i}.wav`;
+                    let wavPromise = fetch(wavUrl, { method: 'HEAD' })
+                        .then(response => {
+                            if (response.ok) {
+                                // Update max file number if this file exists
+                                maxFileNumbers[sample.pattern] = Math.max(maxFileNumbers[sample.pattern], i);
+                                // Record that this file number exists as WAV
+                                sample.fileFormats[i] = '.wav';
+                                return true;
+                            }
+                            return false;
+                        })
+                        .catch(() => false);
+                    
+                    fileCheckPromises.push(wavPromise);
+                    
+                    // Also check for MP3 files
+                    let mp3Url = `./audio/${sample.file}${i}.mp3`;
+                    let mp3Promise = fetch(mp3Url, { method: 'HEAD' })
+                        .then(response => {
+                            if (response.ok) {
+                                // Update max file number if this file exists
+                                maxFileNumbers[sample.pattern] = Math.max(maxFileNumbers[sample.pattern], i);
+                                // Record that this file number exists as MP3
+                                sample.fileFormats[i] = '.mp3';
+                                return true;
+                            }
+                            return false;
+                        })
+                        .catch(() => false);
+                    
+                    fileCheckPromises.push(mp3Promise);
+                }
+            });
         }
-    } else {
-        for (var j = 0; j < voice.samples.length; j++) {
-            let sample = voice.samples[j];
+    });
+    
+    // Wait for all file checks to complete
+    await Promise.all(fileCheckPromises);
+    
+    // Now we need to update sample counts based on what we found
+    config.voices.forEach(voice => {
+        if (voice.samples) {
+            voice.samples.forEach(sample => {
+                if (sample.pattern && maxFileNumbers[sample.pattern] > 0) {
+                    sample.count = maxFileNumbers[sample.pattern];
+                    console.log(`Found ${sample.count} files for pattern: ${sample.pattern}`);
+                }
+            });
+        }
+    });
+    
+    // Now rebuild the audio mappings with the discovered counts
+    initializeAudioMappings();
+}
 
-            for (var i = 1; i <= sample.count; i++) {
+// Separate function to initialize audio mappings after file discovery
+function initializeAudioMappings() {
+    // Reset values before rebuilding
+    sampleUrls = {};
+    noteRanges = {};
+    noteTags = {};
+    midiNumber = 0;
+    
+    config.voices.forEach((voice, index) => {
+        midiStart = midiNumber;
+        if (voice.samples == undefined) {
+            for (var i = 1; i <= voice.count; i++) {
                 let key = Tone.Frequency(midiNumber, "midi").toNote();
-                sampleUrls[key] = `${sample.file}${i}.wav`;
-                noteTags[midiNumber] = sample.tag.split(',');
+                // Default to WAV for non-sample voices
+                sampleUrls[key] = `${voice.file}${i}.wav`;
                 midiNumber++; 
             }
-        }
-    }
+        } else {
+            for (var j = 0; j < voice.samples.length; j++) {
+                let sample = voice.samples[j];
+                
+                // Skip if count is 0 (no files found)
+                if (!sample.count || sample.count <= 0) continue;
 
-    noteRanges[index] = range(midiStart, midiNumber - 1);
+                for (var i = 1; i <= sample.count; i++) {
+                    let key = Tone.Frequency(midiNumber, "midi").toNote();
+                    // Use the detected file format (MP3 or WAV) or default to WAV
+                    let fileFormat = (sample.fileFormats && sample.fileFormats[i]) ? sample.fileFormats[i] : '.wav';
+                    sampleUrls[key] = `${sample.file}${i}${fileFormat}`;
+                    noteTags[midiNumber] = sample.tag.split(',');
+                    midiNumber++; 
+                }
+            }
+        }
+
+        noteRanges[index] = range(midiStart, midiNumber - 1);
+    });
+    
+    console.log(`Total audio files mapped: ${Object.keys(sampleUrls).length}`);
+}
+
+// Initialize with discovery
+discoverAudioFiles().then(() => {
+    console.log("Audio file discovery complete");
+    // Initialize sampler after discovery is complete
+    sampler = new Tone.Sampler({
+        urls: sampleUrls,
+        release: 1,
+        baseUrl: "./audio/",
+    }).toDestination();
+}).catch(error => {
+    console.error("Error during audio file discovery:", error);
+    // Fallback to traditional initialization if discovery fails
+    initializeAudioMappings();
+    
+    // Create sampler with fallback mappings
+    sampler = new Tone.Sampler({
+        urls: sampleUrls,
+        release: 1,
+        baseUrl: "./audio/",
+    }).toDestination();
 });
 
-const sampler = new Tone.Sampler({
-	urls: sampleUrls,
-	release: 1,
-	baseUrl: "./audio/",
-}).toDestination();
+// Define sampler variable at the top level so it can be used throughout the code
+let sampler;
 
 function progress() {
     // return Tone.Transport.seconds / config.duration;
