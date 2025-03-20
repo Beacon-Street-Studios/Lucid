@@ -5,31 +5,31 @@ config.duration = 4.0;
 config.defaultPlaybackRate = 2.0;
 
 let swellSamples = [
-    {file: 'HUMANITY/SWELL/bss_lucid_swell_humanity_', count:21, tag: 'humanity'},
-    {file: 'DEFIANCE/SWELL/bss_lucid_swell_defiance_', count:24, tag: 'defiance'},
-    {file: 'SOPHISTICATION/SWELL/bss_lucid_swell_sophistication_', count:23, tag: 'sophistication'},
-    {file: 'INNOVATION/SWELL/bss_lucid_swell_innovation_', count:27, tag: 'innovation'},
+    {file: 'HUMANITY/SWELL/bss_lucid_swell_humanity_', count:10, tag: 'humanity'},
+    {file: 'DEFIANCE/SWELL/bss_lucid_swell_defiance_', count:10, tag: 'defiance'},
+    {file: 'SOPHISTICATION/SWELL/bss_lucid_swell_sophistication_', count:10, tag: 'sophistication'},
+    {file: 'INNOVATION/SWELL/bss_lucid_swell_innovation_', count:10, tag: 'innovation'},
 ];
 
 let chimeSamples = [
-    {file: 'HUMANITY/CHIME/bss_lucid_chime_humanity_', count:21, tag: 'humanity'},
-    {file: 'DEFIANCE/CHIME/bss_lucid_chime_defiance_', count:25, tag: 'defiance'},
-    {file: 'SOPHISTICATION/CHIME/bss_lucid_chime_sophistication_', count:23, tag: 'sophistication'},
-    {file: 'INNOVATION/CHIME/bss_lucid_chime_innovation_', count:26, tag: 'innovation'},
+    {file: 'HUMANITY/CHIME/bss_lucid_chime_humanity_', count:10, tag: 'humanity'},
+    {file: 'DEFIANCE/CHIME/bss_lucid_chime_defiance_', count:10, tag: 'defiance'},
+    {file: 'SOPHISTICATION/CHIME/bss_lucid_chime_sophistication_', count:10, tag: 'sophistication'},
+    {file: 'INNOVATION/CHIME/bss_lucid_chime_innovation_', count:10, tag: 'innovation'},
 ];
 
 let melodySamples = [
-    {file: 'HUMANITY/MELODY/bss_lucid_melody_humanity_', count:7, tag: 'humanity'},
-    {file: 'DEFIANCE/MELODY/bss_lucid_melody_defiance_', count:9, tag: 'defiance'},
-    {file: 'SOPHISTICATION/MELODY/bss_lucid_melody_sophistication_', count:13, tag: 'sophistication'},
-    {file: 'INNOVATION/MELODY/bss_lucid_melody_innovation_', count:11, tag: 'innovation'},
+    {file: 'HUMANITY/MELODY/bss_lucid_melody_humanity_', count:10, tag: 'humanity'},
+    {file: 'DEFIANCE/MELODY/bss_lucid_melody_defiance_', count:10, tag: 'defiance'},
+    {file: 'SOPHISTICATION/MELODY/bss_lucid_melody_sophistication_', count:10, tag: 'sophistication'},
+    {file: 'INNOVATION/MELODY/bss_lucid_melody_innovation_', count:10, tag: 'innovation'},
 ];
 
 let percussionSamples = [
-    {file: 'HUMANITY/PERCUSSION/bss_lucid_percussion_humanity_', count:9, tag: 'humanity'},
-    {file: 'DEFIANCE/PERCUSSION/bss_lucid_percussion_defiance_', count:14, tag: 'defiance'},
-    {file: 'SOPHISTICATION/PERCUSSION/bss_lucid_percussion_sophistication_', count:9, tag: 'sophistication'},
-    {file: 'INNOVATION/PERCUSSION/bss_lucid_percussion_innovation_', count:16, tag: 'innovation'},
+    {file: 'HUMANITY/PERCUSSION/bss_lucid_percussion_humanity_', count:10, tag: 'humanity'},
+    {file: 'DEFIANCE/PERCUSSION/bss_lucid_percussion_defiance_', count:10, tag: 'defiance'},
+    {file: 'SOPHISTICATION/PERCUSSION/bss_lucid_percussion_sophistication_', count:10, tag: 'sophistication'},
+    {file: 'INNOVATION/PERCUSSION/bss_lucid_percussion_innovation_', count:10, tag: 'innovation'},
 ];
 
 let swellSprite = {
