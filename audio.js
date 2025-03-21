@@ -32,7 +32,7 @@ config.voices.forEach( (voice, index) => {
     if (voice.samples == undefined) {
         for (var i = 1; i <= voice.count; i++) {
             let key = Tone.Frequency(midiNumber, "midi").toNote();
-            sampleUrls[key] = `${voice.file}${i}.mp3`;
+            sampleUrls[key] = `${voice.file}${i}.wav`;
             midiNumber++; 
         }
     } else {
@@ -41,7 +41,7 @@ config.voices.forEach( (voice, index) => {
 
             for (var i = 1; i <= sample.count; i++) {
                 let key = Tone.Frequency(midiNumber, "midi").toNote();
-                sampleUrls[key] = `${sample.file}${i}.mp3`;
+                sampleUrls[key] = `${sample.file}${i}.wav`;
                 noteTags[midiNumber] = sample.tag.split(',');
                 midiNumber++; 
             }
