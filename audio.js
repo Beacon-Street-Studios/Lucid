@@ -51,83 +51,11 @@ config.voices.forEach( (voice, index) => {
     noteRanges[index] = range(midiStart, midiNumber - 1);
 });
 
-// Track loading progress
-let totalSamples = Object.keys(sampleUrls).length;
-let loadedSamples = 0;
-
-// Create a function to update the loading progress bar
-function updateLoadingProgress() {
-    loadedSamples++;
-    let progress = Math.min(Math.floor((loadedSamples / totalSamples) * 100), 100);
-    let loadingBar = document.getElementById('audio-loader-bar');
-    if (loadingBar) {
-        loadingBar.style.width = progress + '%';
-    }
-    
-    // Hide loader when complete
-    if (progress >= 100) {
-        setTimeout(function() {
-            let loader = document.getElementById('audio-loader');
-            if (loader) {
-                // First fade out
-                loader.classList.add('fade-out');
-                
-                // Then hide after transition completes
-                setTimeout(function() {
-                    loader.classList.add('hidden');
-                }, 800);
-            }
-        }, 500);
-    }
-}
-
 const sampler = new Tone.Sampler({
 	urls: sampleUrls,
 	release: 1,
 	baseUrl: "./audio/",
-    onload: function() {
-        // All samples loaded
-        let loader = document.getElementById('audio-loader');
-        if (loader) {
-            document.getElementById('audio-loader-bar').style.width = '100%';
-            setTimeout(function() {
-                // First fade out
-                loader.classList.add('fade-out');
-                
-                // Then hide after transition completes
-                setTimeout(function() {
-                    loader.classList.add('hidden');
-                }, 800);
-            }, 500);
-        }
-    },
-    onerror: function(error) {
-        console.error("Error loading samples:", error);
-        // Hide loader even on error after 8 seconds
-        setTimeout(function() {
-            let loader = document.getElementById('audio-loader');
-            if (loader) {
-                // First fade out
-                loader.classList.add('fade-out');
-                
-                // Then hide after transition completes
-                setTimeout(function() {
-                    loader.classList.add('hidden');
-                }, 800);
-            }
-        }, 8000);
-    }
 }).toDestination();
-
-// Track individual buffer loads
-Object.keys(sampleUrls).forEach(note => {
-    // Create an observer to track the loading of each buffer
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', "./audio/" + sampleUrls[note], true);
-    xhr.responseType = 'arraybuffer';
-    xhr.onload = updateLoadingProgress;
-    xhr.send();
-});
 
 function progress() {
     // return Tone.Transport.seconds / config.duration;
