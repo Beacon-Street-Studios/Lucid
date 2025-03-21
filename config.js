@@ -5,21 +5,21 @@ config.duration = 4.0;
 config.defaultPlaybackRate = 2.0;
 
 let swellSamples = [
-    {file: 'HUMANITY/SWELL/bss_lucid_swell_humanity_', count:10, tag: 'humanity'},
+    {file: 'HUMANITY/SWELL/bss_lucid_swell_humanity_', count:12, tag: 'humanity'},
     {file: 'DEFIANCE/SWELL/bss_lucid_swell_defiance_', count:10, tag: 'defiance'},
-    {file: 'SOPHISTICATION/SWELL/bss_lucid_swell_sophistication_', count:10, tag: 'sophistication'},
+    {file: 'SOPHISTICATION/SWELL/bss_lucid_swell_sophistication_', count:11, tag: 'sophistication'},
     {file: 'INNOVATION/SWELL/bss_lucid_swell_innovation_', count:10, tag: 'innovation'},
 ];
 
 let chimeSamples = [
     {file: 'HUMANITY/CHIME/bss_lucid_chime_humanity_', count:10, tag: 'humanity'},
-    {file: 'DEFIANCE/CHIME/bss_lucid_chime_defiance_', count:10, tag: 'defiance'},
-    {file: 'SOPHISTICATION/CHIME/bss_lucid_chime_sophistication_', count:10, tag: 'sophistication'},
+    {file: 'DEFIANCE/CHIME/bss_lucid_chime_defiance_', count:11, tag: 'defiance'},
+    {file: 'SOPHISTICATION/CHIME/bss_lucid_chime_sophistication_', count:12, tag: 'sophistication'},
     {file: 'INNOVATION/CHIME/bss_lucid_chime_innovation_', count:10, tag: 'innovation'},
 ];
 
 let melodySamples = [
-    {file: 'HUMANITY/MELODY/bss_lucid_melody_humanity_', count:10, tag: 'humanity'},
+    {file: 'HUMANITY/MELODY/bss_lucid_melody_humanity_', count:15, tag: 'humanity'},
     {file: 'DEFIANCE/MELODY/bss_lucid_melody_defiance_', count:10, tag: 'defiance'},
     {file: 'SOPHISTICATION/MELODY/bss_lucid_melody_sophistication_', count:10, tag: 'sophistication'},
     {file: 'INNOVATION/MELODY/bss_lucid_melody_innovation_', count:10, tag: 'innovation'},
