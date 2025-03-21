@@ -19,32 +19,119 @@ let filterButtons;
 let spritesheetRefs = [];
 let sprites = [];
 
+// Loading screen variables
+let totalAssets = 0;
+let loadedAssets = 0;
+let loadingScreenActive = true;
+
+function countAudioFiles() {
+  let count = 0;
+  // Count audio files from the config
+  config.voices.forEach(voice => {
+    if (voice.samples) {
+      voice.samples.forEach(sample => {
+        count += sample.count;
+      });
+    } else if (voice.file && voice.count) {
+      count += voice.count;
+    }
+  });
+  return count;
+}
+
 function preload() {
+  // Calculate total assets to load
+  // Images to load: background + spritesheets + UI elements + audio files
+  const visualAssets = 1 + config.voices.length + 13; // Background + spritesheets + UI elements
+  const audioAssets = countAudioFiles();
+  totalAssets = visualAssets + audioAssets;
+  
+  console.log(`Total assets to load: ${totalAssets} (${visualAssets} visual + ${audioAssets} audio)`);
+  
+  setupLoadingScreen();
+  
+  // Add loading handlers to each loadImage call
   if (typeof config.backgroundImage !== "undefined") { 
-    backgroundImg = loadImage('img/' + config.backgroundImage)
+    backgroundImg = loadImage('img/' + config.backgroundImage, assetLoaded, loadError);
+  } else {
+    loadedAssets++; // Count as loaded even if not present
   }
 
   // imgRefs = config.voices.map( (voice) => { return loadImage('img/' + voice.image) } );
-  spritesheetRefs = config.voices.map( (voice) => { return loadImage('img/' + voice.sprite.spritesheet) } );
+  spritesheetRefs = config.voices.map((voice) => { 
+    return loadImage('img/' + voice.sprite.spritesheet, assetLoaded, loadError);
+  });
 
-  prevImg = loadImage('img/previous_sound.png');
-  nextImg = loadImage('img/next_sound.png');
+  prevImg = loadImage('img/previous_sound.png', assetLoaded, loadError);
+  nextImg = loadImage('img/next_sound.png', assetLoaded, loadError);
 
-  playImg = loadImage('img/play.png');
-  stopImg = loadImage('img/stop.png');
-  randomImg = loadImage('img/random.png');
-  helpImg = loadImage('img/help.png');
-  saveImg = loadImage('img/save.png');
+  playImg = loadImage('img/play.png', assetLoaded, loadError);
+  stopImg = loadImage('img/stop.png', assetLoaded, loadError);
+  randomImg = loadImage('img/random.png', assetLoaded, loadError);
+  helpImg = loadImage('img/help.png', assetLoaded, loadError);
+  saveImg = loadImage('img/save.png', assetLoaded, loadError);
 
-  humanityImg = loadImage('img/HUMANITY.png');
-  defianceImg = loadImage('img/DEFIANCE.png');
-  sophisticationImg = loadImage('img/SOPHISTICATION.png');
-  innovationImg = loadImage('img/INNOVATION.png');
+  humanityImg = loadImage('img/HUMANITY.png', assetLoaded, loadError);
+  defianceImg = loadImage('img/DEFIANCE.png', assetLoaded, loadError);
+  sophisticationImg = loadImage('img/SOPHISTICATION.png', assetLoaded, loadError);
+  innovationImg = loadImage('img/INNOVATION.png', assetLoaded, loadError);
 
-  fasterImg = loadImage('img/faster.png');
-  slowerImg = loadImage('img/slower.png');
+  fasterImg = loadImage('img/faster.png', assetLoaded, loadError);
+  slowerImg = loadImage('img/slower.png', assetLoaded, loadError);
 
-  indicatorImg = loadImage('img/play_bar_indicator.png');
+  indicatorImg = loadImage('img/play_bar_indicator.png', assetLoaded, loadError);
+  
+  // Set a failsafe to ensure the loading screen eventually disappears
+  // even if not all assets load properly
+  setTimeout(function() {
+    const loadingBar = document.getElementById('lucid-loader-bar');
+    if (loadingBar && parseFloat(loadingBar.style.width) < 100) {
+      console.log('Loading taking too long - forcing completion');
+      loadingBar.style.width = '100%';
+      setTimeout(hideLoadingScreen, 500);
+    }
+  }, 10000); // 10 second maximum wait time
+}
+
+function setupLoadingScreen() {
+  // Reset the loading bar to 0%
+  document.getElementById('lucid-loader-bar').style.width = '0%';
+}
+
+function assetLoaded() {
+  loadedAssets++;
+  updateProgress();
+}
+
+function updateProgress() {
+  let progress = Math.min(Math.floor((loadedAssets / totalAssets) * 100), 100);
+  document.getElementById('lucid-loader-bar').style.width = progress + '%';
+  
+  // Once loading is complete, hide the loading screen
+  if (progress >= 100) {
+    setTimeout(hideLoadingScreen, 500); // Slight delay to show completed bar
+  }
+}
+
+function loadError(err) {
+  console.error('Error loading asset:', err);
+  assetLoaded(); // Count it as loaded to avoid stalling
+}
+
+function updateLoadingText(text) {
+  document.getElementById('loading-text').innerText = text;
+}
+
+function hideLoadingScreen() {
+  if (!loadingScreenActive) return;
+  
+  // Hide the loading screen
+  const loadingScreen = document.getElementById('lucid-loader');
+  if (loadingScreen) {
+    loadingScreen.classList.add('hidden');
+    // We'll leave it in the DOM but hidden with display: none !important
+    loadingScreenActive = false;
+  }
 }
 
 function setup() {

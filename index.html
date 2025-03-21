@@ -27,8 +27,67 @@
     <script src="https://unpkg.com/p5.tween/dist/p5.tween.min.js"></script>
   </head>
   <body style="margin: 0; overflow: hidden;">
+    <!-- Simple loading screen that tracks Tone.js audio loading -->
+    <style>
+      #audio-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 1;
+        transition: opacity 0.8s ease-out;
+      }
+      
+      #audio-loader.fade-out {
+        opacity: 0;
+      }
+      
+      #audio-loader.hidden {
+        display: none;
+      }
+      
+      #audio-loader-text {
+        color: #fff;
+        font-family: Arial, sans-serif;
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+      
+      #audio-loader-container {
+        width: 400px;
+        height: 25px;
+        background: #000;
+        border: 3px solid #fff;
+        border-radius: 25px;
+        overflow: hidden;
+      }
+      
+      #audio-loader-bar {
+        height: 100%;
+        width: 0%;
+        background: #fff;
+        border-radius: 25px;
+        transition: width 0.3s ease;
+      }
+    </style>
+    
+    <div id="audio-loader">
+      <div id="logo-loading-wrapper" style="display: flex; flex-direction: column; align-items: center;">
+        <img src="img/lucid_logo.svg" alt="Lucid" style="margin-bottom: 30px; max-width: 350px;">
+        <div id="audio-loader-text">Loading Audio...</div>
+        <div id="audio-loader-container" style="margin-top: 10px;">
+          <div id="audio-loader-bar"></div>
+        </div>
+      </div>
+    </div>
     <main style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-      <div id="p5_loading" class="loadingclass">Loading...</div>
+      <div id="p5_loading" class="loadingclass" style="display: none;">Loading...</div>
     </main>
     <div class="modal-content">
       <div id="copy">COPY THIS LINK TO SHARE YOUR CREATION</div>
